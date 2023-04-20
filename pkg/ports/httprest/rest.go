@@ -19,7 +19,7 @@ func (a App) Routes() {
 		return a.Create(c)
 	})
 
-	a.FiberApp.Put("/decks/:id/draw", func(c *fiber.Ctx) error {
+	a.FiberApp.Put("/decks/:id/draw/:qty", func(c *fiber.Ctx) error {
 		return a.Draw(c)
 	})
 }

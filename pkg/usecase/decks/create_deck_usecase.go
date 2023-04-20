@@ -3,7 +3,9 @@ package decks
 import "context"
 
 func (r *deckUseCase) Create(ctx context.Context) (*Deck, error) {
-	deck, err := r.DeckRepository.CreateDeck(ctx)
+	// find cardIds before create deck
+
+	deck, err := r.DeckRepository.CreateDeck(ctx, []int{})
 	if err != nil {
 		return nil, err
 	}

@@ -11,4 +11,4 @@ build-mocks:
 
 
 new-migration: # new-migration name=migration_name
-	migrate create -ext sql -dir pkg/adapters/repository/postgres/migrations -seq $(name)
+	migrate create -ext sql -dir pkg/adapters/repository/pg/migrations -seq $(name)

@@ -3,4 +3,4 @@ CREATE TABLE cards(
     suit varchar(10) NOT NULL,
     value varchar(10) NOT NULL,
     code varchar(2) UNIQUE
-)
+);

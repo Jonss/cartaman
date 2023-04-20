@@ -21,7 +21,7 @@ type Card struct {
 }
 
 type DeckRepository interface {
-	CreateDeck(context.Context) (*Deck, error)
+	CreateDeck(context.Context, []int) (*Deck, error)
 }
 
 type CardRepository interface {
