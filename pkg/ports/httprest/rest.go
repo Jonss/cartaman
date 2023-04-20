@@ -1,9 +1,13 @@
 package httprest
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/Jonss/cartaman/pkg/usecases/decks"
+	"github.com/gofiber/fiber/v2"
+)
 
 type App struct {
-	FiberApp *fiber.App
+	FiberApp    *fiber.App
+	DeckUseCase decks.DeckUseCase
 }
 
 func (a App) Routes() {
