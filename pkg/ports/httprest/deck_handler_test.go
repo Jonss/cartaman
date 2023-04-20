@@ -1,13 +1,14 @@
 package httprest_test
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/Jonss/cartaman/pkg/ports/httprest"
-	"github.com/Jonss/cartaman/pkg/usecases/decks"
-	mock_decks "github.com/Jonss/cartaman/pkg/usecases/decks/mocks"
+	"github.com/Jonss/cartaman/pkg/usecase/decks"
+	mock_decks "github.com/Jonss/cartaman/pkg/usecase/decks/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -26,7 +27,7 @@ func TestCreateDeck(t *testing.T) {
 			name: "should get dummy message",
 			buildStubs: func(deckRepo *mock_decks.MockDeckUseCase) {
 				deckID := uuid.Must(uuid.Parse("c723d533-8612-4cde-bd5e-438c03f6204a"))
-				deckRepo.EXPECT().Create().Times(1).Return(&decks.Deck{
+				deckRepo.EXPECT().Create(context.Background()).Times(1).Return(&decks.Deck{
 					DeckID:    deckID,
 					Shuffled:  false,
 					Remaining: 56,

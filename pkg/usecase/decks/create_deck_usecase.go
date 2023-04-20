@@ -1,7 +1,9 @@
 package decks
 
-func (r *deckUseCase) Create() (*Deck, error) {
-	deck, err := r.DeckRepository.CreateDeck()
+import "context"
+
+func (r *deckUseCase) Create(ctx context.Context) (*Deck, error) {
+	deck, err := r.DeckRepository.CreateDeck(ctx)
 	if err != nil {
 		return nil, err
 	}

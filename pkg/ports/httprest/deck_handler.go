@@ -8,7 +8,7 @@ import (
 
 func (a App) Create(c *fiber.Ctx) error {
 	// TODO: add validation
-	deck, err := a.DeckUseCase.Create()
+	deck, err := a.DeckUseCase.Create(c.UserContext())
 	if err != nil {
 		c.Status(http.StatusInternalServerError).SendString("error")
 	}

@@ -1,7 +1,7 @@
 package httprest
 
 import (
-	"github.com/Jonss/cartaman/pkg/usecases/decks"
+	"github.com/Jonss/cartaman/pkg/usecase/decks"
 	"github.com/gofiber/fiber/v2"
 )
 

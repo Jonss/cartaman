@@ -1,7 +1,9 @@
 package decks
 
 import (
-	"github.com/Jonss/cartaman/pkg/repository"
+	"context"
+
+	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/google/uuid"
 )
 
@@ -16,7 +18,7 @@ type deckUseCase struct {
 }
 
 type DeckUseCase interface {
-	Create() (*Deck, error)
+	Create(context.Context) (*Deck, error)
 }
 
 var _ DeckUseCase = (*deckUseCase)(nil)
