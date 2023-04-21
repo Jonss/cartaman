@@ -4,7 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/Jonss/cartaman/pkg/adapters/repository/pg"
+	"github.com/google/uuid"
 	"github.com/matryer/is"
 )
 
@@ -20,7 +22,12 @@ func TestCreateDeck(t *testing.T) {
 	err := cardsRepo.SeedCards(ctx)
 	is.NoErr(err)
 
-	deck, err := deckRepo.CreateDeck(ctx, []int{1, 2, 3})
+	params := repository.CreateDeckParams{
+		CardIDs:    []int{1, 2, 3},
+		ExternalID: uuid.New(),
+	}
+
+	deck, err := deckRepo.CreateDeck(ctx, params)
 	is.NoErr(err)
 
 	is.Equal(false, deck.Shuffled)
@@ -40,7 +47,11 @@ func TestCreateDeck_NoCardIDs(t *testing.T) {
 	err := cardsRepo.SeedCards(ctx)
 	is.NoErr(err)
 
-	deck, err := deckRepo.CreateDeck(ctx, []int{})
+	params := repository.CreateDeckParams{
+		ExternalID: uuid.New(),
+	}
+
+	deck, err := deckRepo.CreateDeck(ctx, params)
 	is.Equal(err.Error(), "error expect cardIDs length > 0")
 	is.Equal(nil, deck)
 }

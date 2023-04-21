@@ -15,10 +15,11 @@ type Deck struct {
 
 type deckUseCase struct {
 	DeckRepository repository.DeckRepository
+	CardRepository repository.CardRepository
 }
 
 type DeckUseCase interface {
-	Create(context.Context) (*Deck, error)
+	Create(context.Context, CreateParams) (*Deck, error)
 }
 
 var _ DeckUseCase = (*deckUseCase)(nil)

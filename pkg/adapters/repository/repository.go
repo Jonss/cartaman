@@ -20,10 +20,17 @@ type Card struct {
 	Code  string
 }
 
+type CreateDeckParams struct {
+	CardIDs    []int
+	Shuffled   bool
+	ExternalID uuid.UUID
+}
+
 type DeckRepository interface {
-	CreateDeck(context.Context, []int) (*Deck, error)
+	CreateDeck(context.Context, CreateDeckParams) (*Deck, error)
 }
 
 type CardRepository interface {
 	SeedCards(context.Context) error
+	GetCardIDs(context.Context, []string) ([]int, error)
 }

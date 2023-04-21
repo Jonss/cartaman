@@ -1,7 +1,7 @@
 CREATE TABLE decks(
     id bigserial PRIMARY KEY,
     external_id varchar UNIQUE,
-    is_shuffle boolean NOT NULL
+    is_shuffled boolean NOT NULL
 );
 
 CREATE TABLE decks_cards(

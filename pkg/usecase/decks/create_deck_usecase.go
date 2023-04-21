@@ -1,11 +1,29 @@
 package decks
 
-import "context"
+import (
+	"context"
 
-func (r *deckUseCase) Create(ctx context.Context) (*Deck, error) {
-	// find cardIds before create deck
+	"github.com/Jonss/cartaman/pkg/adapters/repository"
+	"github.com/google/uuid"
+)
 
-	deck, err := r.DeckRepository.CreateDeck(ctx, []int{})
+type CreateParams struct {
+	CardCodes []string
+	Shuffled  bool
+}
+
+func (r *deckUseCase) Create(ctx context.Context, params CreateParams) (*Deck, error) {
+	cardIDs, err := r.CardRepository.GetCardIDs(ctx, params.CardCodes)
+	if err != nil {
+		return nil, err
+	}
+
+	externalID := uuid.New()
+	deck, err := r.DeckRepository.CreateDeck(ctx, repository.CreateDeckParams{
+		ExternalID: externalID,
+		CardIDs:    cardIDs,
+		Shuffled:   params.Shuffled,
+	})
 	if err != nil {
 		return nil, err
 	}
