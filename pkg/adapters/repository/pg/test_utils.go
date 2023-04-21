@@ -9,11 +9,10 @@ import (
 )
 
 /*
-	newDbTestSetup does:
-
-- configures a container with postgres,
-- creates a connection
-- run migration
+--- NewDbTestSetup does:
+- 	configures a container with postgres,
+- 	creates a connection
+- 	run migration
 */
 func NewDbTestSetup(t *testing.T) (*sql.DB, func()) {
 	cfg := pg_container.PostgresCfg{

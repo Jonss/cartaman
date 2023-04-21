@@ -36,6 +36,7 @@ func TestCreateDeck(t *testing.T) {
 }
 
 func TestCreateDeck_NoCardIDs(t *testing.T) {
+	// given
 	is := is.New(t)
 	conn, tearDown := pg.NewDbTestSetup(t)
 	defer tearDown()
@@ -50,8 +51,63 @@ func TestCreateDeck_NoCardIDs(t *testing.T) {
 	params := repository.CreateDeckParams{
 		ExternalID: uuid.New(),
 	}
-
+	// when
 	deck, err := deckRepo.CreateDeck(ctx, params)
+
+	// then
 	is.Equal(err.Error(), "error expect cardIDs length > 0")
 	is.Equal(nil, deck)
+}
+
+func TestFetchCards(t *testing.T) {
+	// given
+	is := is.New(t)
+	conn, tearDown := pg.NewDbTestSetup(t)
+	defer tearDown()
+
+	ctx := context.Background()
+	deckRepo := pg.PGDeckRepository{DB: conn}
+	cardsRepo := pg.PGCardRepository{DB: conn}
+
+	err := cardsRepo.SeedCards(ctx)
+	is.NoErr(err)
+
+	externalID := uuid.New()
+	params := repository.CreateDeckParams{
+		CardIDs:    []int{1},
+		ExternalID: externalID,
+	}
+	_, err = deckRepo.CreateDeck(ctx, params)
+	is.NoErr(err)
+
+	openDeck, err := deckRepo.FetchDeck(ctx, externalID)
+	is.NoErr(err)
+	is.Equal(1, len(openDeck.Cards))
+	is.Equal("ACE", openDeck.Cards[0].Value)
+	is.Equal("AC", openDeck.Cards[0].Code)
+	is.Equal("CLUBS", openDeck.Cards[0].Suit)
+	is.Equal(externalID, openDeck.Deck.ExternalID)
+}
+
+func TestFetchCards_ExternalIDNotFound(t *testing.T) {
+	// given
+	is := is.New(t)
+	conn, tearDown := pg.NewDbTestSetup(t)
+	defer tearDown()
+
+	ctx := context.Background()
+	deckRepo := pg.PGDeckRepository{DB: conn}
+	cardsRepo := pg.PGCardRepository{DB: conn}
+
+	err := cardsRepo.SeedCards(ctx)
+	is.NoErr(err)
+
+	externalID := uuid.New()
+
+	// when
+	openDeck, err := deckRepo.FetchDeck(ctx, externalID)
+
+	// then
+	is.Equal(err, pg.ErrorDeckNotFound)
+	is.Equal(nil, openDeck)
 }

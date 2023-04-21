@@ -16,8 +16,13 @@ type Deck struct {
 type Card struct {
 	ID    int
 	Value string
-	Suite string
+	Suit  string
 	Code  string
+}
+
+type OpenDeck struct {
+	Deck  Deck
+	Cards []Card
 }
 
 type CreateDeckParams struct {
@@ -28,6 +33,7 @@ type CreateDeckParams struct {
 
 type DeckRepository interface {
 	CreateDeck(context.Context, CreateDeckParams) (*Deck, error)
+	FetchDeck(context.Context, uuid.UUID) (*OpenDeck, error)
 }
 
 type CardRepository interface {

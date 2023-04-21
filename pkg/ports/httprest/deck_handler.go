@@ -9,7 +9,6 @@ import (
 )
 
 func (a App) Create(c *fiber.Ctx) error {
-	// TODO: add validation
 	cardCodes := strings.Split(c.Query("cards", ""), ",")
 	shuffled := c.QueryBool("shuffled", false)
 

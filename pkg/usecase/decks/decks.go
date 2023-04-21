@@ -13,6 +13,17 @@ type Deck struct {
 	Remaining int       `json:"remaining"`
 }
 
+type Card struct {
+	Value string `json:"value"`
+	Suit  string `json:"suit"`
+	Code  string `json:"code"`
+}
+
+type OpenCard struct {
+	Deck
+	Card
+}
+
 type deckUseCase struct {
 	DeckRepository repository.DeckRepository
 	CardRepository repository.CardRepository
@@ -20,6 +31,7 @@ type deckUseCase struct {
 
 type DeckUseCase interface {
 	Create(context.Context, CreateParams) (*Deck, error)
+	Open(context.Context, uuid.UUID) (*OpenCard, error)
 }
 
 var _ DeckUseCase = (*deckUseCase)(nil)

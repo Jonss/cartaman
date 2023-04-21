@@ -10,6 +10,7 @@ import (
 
 	decks "github.com/Jonss/cartaman/pkg/usecase/decks"
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockDeckUseCase is a mock of DeckUseCase interface.
@@ -48,4 +49,19 @@ func (m *MockDeckUseCase) Create(arg0 context.Context, arg1 decks.CreateParams) 
 func (mr *MockDeckUseCaseMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDeckUseCase)(nil).Create), arg0, arg1)
+}
+
+// Open mocks base method.
+func (m *MockDeckUseCase) Open(arg0 context.Context, arg1 uuid.UUID) (*decks.OpenCard, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Open", arg0, arg1)
+	ret0, _ := ret[0].(*decks.OpenCard)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Open indicates an expected call of Open.
+func (mr *MockDeckUseCaseMockRecorder) Open(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockDeckUseCase)(nil).Open), arg0, arg1)
 }
