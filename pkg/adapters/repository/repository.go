@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -40,3 +41,5 @@ type CardRepository interface {
 	SeedCards(context.Context) error
 	GetCardIDs(context.Context, []string) ([]int, error)
 }
+
+var ErrorDeckNotFound = fmt.Errorf("error deck not found")

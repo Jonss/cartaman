@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	_ "github.com/golang-migrate/migrate/v4/source/file" // migration
@@ -17,8 +16,6 @@ type PGDeckRepository struct {
 }
 
 var _ repository.DeckRepository = (*PGDeckRepository)(nil)
-
-var ErrorDeckNotFound = fmt.Errorf("error deck not found")
 
 func (r PGDeckRepository) CreateDeck(ctx context.Context, params repository.CreateDeckParams) (*repository.Deck, error) {
 	if len(params.CardIDs) == 0 {
@@ -89,7 +86,7 @@ func (r PGDeckRepository) FetchDeck(ctx context.Context, deckID uuid.UUID) (*rep
 		cards = append(cards, card)
 	}
 	if openDeck.Deck.ID == 0 {
-		return nil, ErrorDeckNotFound
+		return nil, repository.ErrorDeckNotFound
 	}
 
 	openDeck.Cards = cards

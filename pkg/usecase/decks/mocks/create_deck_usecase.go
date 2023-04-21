@@ -52,10 +52,10 @@ func (mr *MockDeckUseCaseMockRecorder) Create(arg0, arg1 interface{}) *gomock.Ca
 }
 
 // Open mocks base method.
-func (m *MockDeckUseCase) Open(arg0 context.Context, arg1 uuid.UUID) (*decks.OpenCard, error) {
+func (m *MockDeckUseCase) Open(arg0 context.Context, arg1 uuid.UUID) (*decks.OpenDeck, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Open", arg0, arg1)
-	ret0, _ := ret[0].(*decks.OpenCard)
+	ret0, _ := ret[0].(*decks.OpenDeck)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

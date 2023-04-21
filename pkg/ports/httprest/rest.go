@@ -7,7 +7,7 @@ import (
 
 type App struct {
 	FiberApp    *fiber.App
-	DeckUseCase decks.DeckUseCase
+	DeckUseCase decks.DeckService
 }
 
 func (a App) Routes() {
@@ -16,7 +16,7 @@ func (a App) Routes() {
 	})
 
 	a.FiberApp.Get("/decks/:id", func(c *fiber.Ctx) error {
-		return a.Create(c)
+		return a.Open(c)
 	})
 
 	a.FiberApp.Put("/decks/:id/draw/:qty", func(c *fiber.Ctx) error {

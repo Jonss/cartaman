@@ -108,6 +108,6 @@ func TestFetchCards_ExternalIDNotFound(t *testing.T) {
 	openDeck, err := deckRepo.FetchDeck(ctx, externalID)
 
 	// then
-	is.Equal(err, pg.ErrorDeckNotFound)
+	is.Equal(err, repository.ErrorDeckNotFound)
 	is.Equal(nil, openDeck)
 }

@@ -19,19 +19,21 @@ type Card struct {
 	Code  string `json:"code"`
 }
 
-type OpenCard struct {
-	Deck
-	Card
+type OpenDeck struct {
+	DeckID    uuid.UUID `json:"deck_id"`
+	Shuffled  bool      `json:"shuffled"`
+	Remaining int       `json:"remaining"`
+	Cards     []Card    `json:"cards"`
 }
 
-type deckUseCase struct {
+type deckService struct {
 	DeckRepository repository.DeckRepository
 	CardRepository repository.CardRepository
 }
 
-type DeckUseCase interface {
+type DeckService interface {
 	Create(context.Context, CreateParams) (*Deck, error)
-	Open(context.Context, uuid.UUID) (*OpenCard, error)
+	Open(context.Context, uuid.UUID) (*OpenDeck, error)
 }
 
-var _ DeckUseCase = (*deckUseCase)(nil)
+var _ DeckService = (*deckService)(nil)

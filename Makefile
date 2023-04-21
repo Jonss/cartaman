@@ -6,7 +6,7 @@ test:
 
 build-mocks:
 # usecases
-	mockgen -destination pkg/usecase/decks/mocks/create_deck_usecase.go github.com/Jonss/cartaman/pkg/usecase/decks DeckUseCase
+	mockgen -destination pkg/usecase/decks/mocks/deck_service.go github.com/Jonss/cartaman/pkg/usecase/decks DeckService
 # repositories
 
 

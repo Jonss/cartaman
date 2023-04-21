@@ -12,7 +12,7 @@ type CreateParams struct {
 	Shuffled  bool
 }
 
-func (r *deckUseCase) Create(ctx context.Context, params CreateParams) (*Deck, error) {
+func (r *deckService) Create(ctx context.Context, params CreateParams) (*Deck, error) {
 	cardIDs, err := r.CardRepository.GetCardIDs(ctx, params.CardCodes)
 	if err != nil {
 		return nil, err
