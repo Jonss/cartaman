@@ -1,4 +1,4 @@
-package decks
+package deck
 
 import "github.com/Jonss/cartaman/pkg/adapters/repository"
 

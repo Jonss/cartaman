@@ -6,7 +6,7 @@ import (
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository/pg"
 	"github.com/Jonss/cartaman/pkg/ports/httprest"
-	"github.com/Jonss/cartaman/pkg/usecase/decks"
+	"github.com/Jonss/cartaman/pkg/usecase/deck"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	deckRepo := pg.NewPGDeckRepository(conn)
-	deckService := decks.NewDeckService(deckRepo, cardRepo)
+	deckService := deck.NewDeckService(deckRepo, cardRepo)
 
 	r := httprest.NewApp(fiber.New(), &deckService)
 	r.Routes()

@@ -6,18 +6,19 @@ import (
 	"strings"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
-	"github.com/Jonss/cartaman/pkg/usecase/decks"
+	"github.com/Jonss/cartaman/pkg/usecase/deck"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
 var deckNotFoundMessage = "deck not found"
+var deckIdIsInvalidMessage = "deck id is invalid"
 
 func (a app) Create(c *fiber.Ctx) error {
 	cardCodes := getCardCodes(c.Query("cards", ""))
 	shuffled := c.QueryBool("shuffled", false)
 
-	deck, err := a.DeckService.Create(c.UserContext(), decks.CreateParams{
+	deck, err := a.DeckService.Create(c.UserContext(), deck.CreateParams{
 		CardCodes: cardCodes,
 		Shuffled:  shuffled,
 	})
@@ -38,7 +39,7 @@ func getCardCodes(codes string) []string {
 func (a app) Open(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
-		return err
+		return c.Status(http.StatusBadRequest).SendString(deckIdIsInvalidMessage)
 	}
 
 	openDeck, err := a.DeckService.Open(c.UserContext(), deckID)
@@ -52,13 +53,13 @@ func (a app) Open(c *fiber.Ctx) error {
 }
 
 type DrawCardsResponse struct {
-	Cards []decks.Card `json:"cards"`
+	Cards []deck.Card `json:"cards"`
 }
 
 func (a app) Draw(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString("deck it is invalid")
+		return c.Status(http.StatusBadRequest).SendString(deckIdIsInvalidMessage)
 	}
 
 	count, err := c.ParamsInt("count", 0)

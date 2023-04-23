@@ -6,7 +6,7 @@ test:
 
 build-mocks:
 # usecases
-	mockgen -destination pkg/usecase/decks/mocks/deck_service.go github.com/Jonss/cartaman/pkg/usecase/decks DeckService
+	mockgen -destination pkg/usecase/deck/mocks/deck_service.go github.com/Jonss/cartaman/pkg/usecase/deck DeckService
 # repositories
 
 new-migration: # new-migration name=migration_name

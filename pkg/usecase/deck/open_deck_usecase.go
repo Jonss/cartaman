@@ -1,4 +1,4 @@
-package decks
+package deck
 
 import (
 	"context"

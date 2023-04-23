@@ -9,8 +9,8 @@ import (
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/Jonss/cartaman/pkg/ports/httprest"
-	"github.com/Jonss/cartaman/pkg/usecase/decks"
-	mock_decks "github.com/Jonss/cartaman/pkg/usecase/decks/mocks"
+	"github.com/Jonss/cartaman/pkg/usecase/deck"
+	mock_deck "github.com/Jonss/cartaman/pkg/usecase/deck/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -23,14 +23,14 @@ func TestCreateDeck(t *testing.T) {
 	testCases := []struct {
 		name           string
 		endpoint       string
-		buildStubs     func(deckRepo *mock_decks.MockDeckService)
+		buildStubs     func(deckRepo *mock_deck.MockDeckService)
 		want           string
 		wantStatusCode int
 	}{
 		{
 			name: "should get a valid response",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
-				deckRepo.EXPECT().Create(context.Background(), gomock.Any()).Times(1).Return(&decks.Deck{
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
+				deckRepo.EXPECT().Create(context.Background(), gomock.Any()).Times(1).Return(&deck.Deck{
 					DeckID:    deckID,
 					Shuffled:  false,
 					Remaining: 56,
@@ -42,8 +42,8 @@ func TestCreateDeck(t *testing.T) {
 		{
 			name:     "should get a shuffled when it's true",
 			endpoint: "?shuffled=true",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
-				deckRepo.EXPECT().Create(context.Background(), gomock.Any()).Times(1).Return(&decks.Deck{
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
+				deckRepo.EXPECT().Create(context.Background(), gomock.Any()).Times(1).Return(&deck.Deck{
 					DeckID:    deckID,
 					Shuffled:  true,
 					Remaining: 56,
@@ -55,9 +55,9 @@ func TestCreateDeck(t *testing.T) {
 		{
 			name:     "should get 3 remaining cards as response",
 			endpoint: "?cards=AS,KD,AC",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
-				params := decks.CreateParams{CardCodes: []string{"AS", "KD", "AC"}, Shuffled: false}
-				deckRepo.EXPECT().Create(context.Background(), params).Times(1).Return(&decks.Deck{
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
+				params := deck.CreateParams{CardCodes: []string{"AS", "KD", "AC"}, Shuffled: false}
+				deckRepo.EXPECT().Create(context.Background(), params).Times(1).Return(&deck.Deck{
 					DeckID:    deckID,
 					Shuffled:  false,
 					Remaining: 3,
@@ -72,7 +72,7 @@ func TestCreateDeck(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// given
 			ctrl := gomock.NewController(t)
-			deckUseCase := mock_decks.NewMockDeckService(ctrl)
+			deckUseCase := mock_deck.NewMockDeckService(ctrl)
 			tc.buildStubs(deckUseCase)
 
 			app := httprest.NewApp(fiber.New(), deckUseCase)
@@ -98,22 +98,22 @@ func TestOpenDeck(t *testing.T) {
 	testCases := []struct {
 		name           string
 		deckID         string
-		buildStubs     func(deckRepo *mock_decks.MockDeckService)
+		buildStubs     func(deckRepo *mock_deck.MockDeckService)
 		want           string
 		wantStatusCode int
 	}{
 		{
 			name:   "should get deck when deckID is valid",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 				deckID := "c723d533-8612-4cde-bd5e-438c03f6204a"
 				deckRepo.EXPECT().Open(context.Background(), gomock.Any()).
 					Times(1).
-					Return(&decks.OpenDeck{
+					Return(&deck.OpenDeck{
 						DeckID:    uuid.MustParse(deckID),
 						Shuffled:  false,
 						Remaining: 1,
-						Cards: []decks.Card{
+						Cards: []deck.Card{
 							{
 								Value: "KING",
 								Suit:  "HEARTS",
@@ -128,17 +128,17 @@ func TestOpenDeck(t *testing.T) {
 		{
 			name:           "should get status code 400 when deckID is invalid",
 			deckID:         "invalid-deck-id",
-			buildStubs:     func(deckRepo *mock_decks.MockDeckService) {},
-			want:           `error id pattern unexpected`,
+			buildStubs:     func(deckRepo *mock_deck.MockDeckService) {},
+			want:           `deck id is invalid`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
 			name:   "should get status code 404 when deck is not found",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 				deckRepo.EXPECT().Open(context.Background(), gomock.Any()).
 					Times(1).
-					Return(&decks.OpenDeck{}, repository.ErrorDeckNotFound)
+					Return(&deck.OpenDeck{}, repository.ErrorDeckNotFound)
 			},
 			want:           `deck not found`,
 			wantStatusCode: http.StatusNotFound,
@@ -149,7 +149,7 @@ func TestOpenDeck(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// given
 			ctrl := gomock.NewController(t)
-			deckUseCase := mock_decks.NewMockDeckService(ctrl)
+			deckUseCase := mock_deck.NewMockDeckService(ctrl)
 			tc.buildStubs(deckUseCase)
 
 			app := httprest.NewApp(fiber.New(), deckUseCase)
@@ -164,7 +164,7 @@ func TestOpenDeck(t *testing.T) {
 			_, _ = res.Body.Read(got)
 
 			// then
-			// is.Equal(tc.wantStatusCode, res.StatusCode)
+			is.Equal(tc.wantStatusCode, res.StatusCode)
 			is.Equal(tc.want, string(got))
 		})
 	}
@@ -176,7 +176,7 @@ func TestDrawDeck(t *testing.T) {
 		name           string
 		deckID         string
 		count          string
-		buildStubs     func(deckRepo *mock_decks.MockDeckService)
+		buildStubs     func(deckRepo *mock_deck.MockDeckService)
 		want           string
 		wantStatusCode int
 	}{
@@ -184,10 +184,10 @@ func TestDrawDeck(t *testing.T) {
 			name:   "should draw 1 card",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
 			count:  "1",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 				deckRepo.EXPECT().Draw(context.Background(), gomock.Any(), gomock.Any()).
 					Times(1).
-					Return([]decks.Card{
+					Return([]deck.Card{
 						{
 							Suit:  "SPADES",
 							Value: "ACE",
@@ -199,20 +199,27 @@ func TestDrawDeck(t *testing.T) {
 			wantStatusCode: http.StatusOK,
 		},
 		{
+			name:           "should get status code 400 when deckID is invalid",
+			deckID:         "invalid-deck-id",
+			count:          "0",
+			buildStubs:     func(deckRepo *mock_deck.MockDeckService) {},
+			want:           `deck id is invalid`,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
 			name:   "should get error when draw number is 0",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
 			count:  "0",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
 			want:           `count should be above 0`,
 			wantStatusCode: http.StatusBadRequest,
 		},
-
 		{
 			name:   "should get error when draw number is invalid",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
 			count:  "-90",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
 			want:           `count should be above 0`,
 			wantStatusCode: http.StatusBadRequest,
@@ -221,7 +228,7 @@ func TestDrawDeck(t *testing.T) {
 			name:   "should get error when draw number is not a number",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
 			count:  "invalid-number",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
 			want:           `count should be above 0`,
 			wantStatusCode: http.StatusBadRequest,
@@ -230,10 +237,10 @@ func TestDrawDeck(t *testing.T) {
 			name:   "should get error when deck was not found",
 			deckID: "c723d533-8612-4cde-bd5e-438c03f6204a",
 			count:  "1",
-			buildStubs: func(deckRepo *mock_decks.MockDeckService) {
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 				deckRepo.EXPECT().Draw(context.Background(), gomock.Any(), gomock.Any()).
 					Times(1).
-					Return([]decks.Card{}, repository.ErrorDeckNotFound)
+					Return([]deck.Card{}, repository.ErrorDeckNotFound)
 			},
 			want:           `deck not found`,
 			wantStatusCode: http.StatusNotFound,
@@ -244,7 +251,7 @@ func TestDrawDeck(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// given
 			ctrl := gomock.NewController(t)
-			deckUseCase := mock_decks.NewMockDeckService(ctrl)
+			deckUseCase := mock_deck.NewMockDeckService(ctrl)
 			tc.buildStubs(deckUseCase)
 
 			app := httprest.NewApp(fiber.New(), deckUseCase)

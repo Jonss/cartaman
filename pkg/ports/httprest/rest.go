@@ -1,16 +1,16 @@
 package httprest
 
 import (
-	"github.com/Jonss/cartaman/pkg/usecase/decks"
+	"github.com/Jonss/cartaman/pkg/usecase/deck"
 	"github.com/gofiber/fiber/v2"
 )
 
 type app struct {
 	FiberApp    *fiber.App
-	DeckService decks.DeckService
+	DeckService deck.DeckService
 }
 
-func NewApp(fiberApp *fiber.App, deckService decks.DeckService) app {
+func NewApp(fiberApp *fiber.App, deckService deck.DeckService) app {
 	return app{FiberApp: fiberApp, DeckService: deckService}
 }
 
