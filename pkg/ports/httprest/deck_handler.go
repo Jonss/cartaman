@@ -10,11 +10,13 @@ import (
 	"github.com/google/uuid"
 )
 
+var deckNotFoundMessage = "deck not found"
+
 func (a App) Create(c *fiber.Ctx) error {
-	cardCodes := strings.Split(c.Query("cards", ""), ",")
+	cardCodes := getCardCodes(c.Query("cards", ""))
 	shuffled := c.QueryBool("shuffled", false)
 
-	deck, err := a.DeckUseCase.Create(c.UserContext(), decks.CreateParams{
+	deck, err := a.DeckService.Create(c.UserContext(), decks.CreateParams{
 		CardCodes: cardCodes,
 		Shuffled:  shuffled,
 	})
@@ -25,25 +27,60 @@ func (a App) Create(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(deck)
 }
 
-func (a App) Open(c *fiber.Ctx) error {
-	paramID := c.Params("id")
+func getCardCodes(codes string) []string {
+	if len(codes) == 0 {
+		return []string{}
+	}
+	return strings.Split(codes, ",")
+}
 
-	deckID, err := uuid.Parse(paramID)
+func (a App) Open(c *fiber.Ctx) error {
+	deckID, err := getDeckID(c)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString("error id pattern unexpected")
+		return err
 	}
 
-	openDeck, err := a.DeckUseCase.Open(c.UserContext(), deckID)
+	openDeck, err := a.DeckService.Open(c.UserContext(), deckID)
 	if err != nil {
 		if err == repository.ErrorDeckNotFound {
-			return c.Status(http.StatusNotFound).SendString("deck not found")
+			return c.Status(http.StatusNotFound).SendString(deckNotFoundMessage)
 		}
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 	return c.JSON(openDeck)
 }
 
-// TODO
+type DrawCardsResponse struct {
+	Cards []decks.Card `json:"cards"`
+}
+
 func (a App) Draw(c *fiber.Ctx) error {
-	return c.SendString("TODO: draw card")
+	deckID, err := getDeckID(c)
+	if err != nil {
+		return err
+	}
+
+	count, err := c.ParamsInt("count", 0)
+	if err != nil || (count <= 0) {
+		return c.Status(http.StatusBadRequest).SendString("count should be above 0")
+	}
+	drawDeck, err := a.DeckService.Draw(c.UserContext(), deckID, count)
+	if err != nil {
+		if err == repository.ErrorDeckNotFound {
+			return c.Status(http.StatusNotFound).SendString(deckNotFoundMessage)
+		}
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+	return c.JSON(DrawCardsResponse{drawDeck})
+}
+
+func getDeckID(c *fiber.Ctx) (uuid.UUID, error) {
+	paramID := c.Params("id")
+
+	deckID, err := uuid.Parse(paramID)
+	if err != nil {
+		return uuid.Nil, c.Status(http.StatusBadRequest).SendString("error id pattern unexpected")
+	}
+
+	return deckID, nil
 }

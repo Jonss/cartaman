@@ -34,6 +34,16 @@ type deckService struct {
 type DeckService interface {
 	Create(context.Context, CreateParams) (*Deck, error)
 	Open(context.Context, uuid.UUID) (*OpenDeck, error)
+	Draw(context.Context, uuid.UUID, int) ([]Card, error)
+}
+
+func NewDeckService(
+	deckRepository repository.DeckRepository,
+	cardRepository repository.CardRepository) deckService {
+	return deckService{
+		DeckRepository: deckRepository,
+		CardRepository: cardRepository,
+	}
 }
 
 var _ DeckService = (*deckService)(nil)

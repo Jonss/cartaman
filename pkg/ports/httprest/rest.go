@@ -7,7 +7,7 @@ import (
 
 type App struct {
 	FiberApp    *fiber.App
-	DeckUseCase decks.DeckService
+	DeckService decks.DeckService
 }
 
 func (a App) Routes() {
@@ -19,7 +19,7 @@ func (a App) Routes() {
 		return a.Open(c)
 	})
 
-	a.FiberApp.Put("/decks/:id/draw/:qty", func(c *fiber.Ctx) error {
+	a.FiberApp.Patch("/decks/:id/draw/:count", func(c *fiber.Ctx) error {
 		return a.Draw(c)
 	})
 }

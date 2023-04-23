@@ -32,7 +32,7 @@ func NewDbTestSetup(t *testing.T) (*sql.DB, func()) {
 		t.Fatalf("error connecting db. error=(%v)", err)
 	}
 
-	err = Migrate(dbConn, cfg.DbName)
+	err = Migrate(dbConn, cfg.DbName, "migrations")
 
 	if err != nil {
 		t.Fatalf("error connecting db. error=(%v)", err)

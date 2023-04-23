@@ -18,12 +18,12 @@ func NewConnection(datasource string) (*sql.DB, error) {
 	return conn, err
 }
 
-func Migrate(db *sql.DB, dbName string) error {
+func Migrate(db *sql.DB, dbName, path string) error {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		return fmt.Errorf("error when migrate.WithInstance(): error=(%w)", err)
 	}
-	m, err := migrate.NewWithDatabaseInstance("file://migrations", dbName, driver)
+	m, err := migrate.NewWithDatabaseInstance("file://"+path, dbName, driver)
 	if err != nil {
 		return fmt.Errorf("error when migrate.NewWithDatabaseInstance(): error=(%w)", err)
 	}

@@ -51,6 +51,21 @@ func (mr *MockDeckServiceMockRecorder) Create(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDeckService)(nil).Create), arg0, arg1)
 }
 
+// Draw mocks base method.
+func (m *MockDeckService) Draw(arg0 context.Context, arg1 uuid.UUID, arg2 int) ([]decks.Card, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Draw", arg0, arg1, arg2)
+	ret0, _ := ret[0].([]decks.Card)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Draw indicates an expected call of Draw.
+func (mr *MockDeckServiceMockRecorder) Draw(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Draw", reflect.TypeOf((*MockDeckService)(nil).Draw), arg0, arg1, arg2)
+}
+
 // Open mocks base method.
 func (m *MockDeckService) Open(arg0 context.Context, arg1 uuid.UUID) (*decks.OpenDeck, error) {
 	m.ctrl.T.Helper()

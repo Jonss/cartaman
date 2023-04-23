@@ -35,6 +35,8 @@ type CreateDeckParams struct {
 type DeckRepository interface {
 	CreateDeck(context.Context, CreateDeckParams) (*Deck, error)
 	FetchDeck(context.Context, uuid.UUID) (*OpenDeck, error)
+	DrawCardFromDeck(context.Context, uuid.UUID, int) error
+	FetchDrewCards(ctx context.Context, deckID uuid.UUID) ([]Card, error)
 }
 
 type CardRepository interface {

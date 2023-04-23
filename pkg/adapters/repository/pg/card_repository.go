@@ -11,6 +11,10 @@ type PGCardRepository struct {
 	DB *sql.DB
 }
 
+func NewPGCardRepository(db *sql.DB) PGCardRepository {
+	return PGCardRepository{DB: db}
+}
+
 func (r PGCardRepository) SeedCards(ctx context.Context) error {
 	var quantity int
 	err := r.DB.QueryRowContext(ctx, "select count(1) from cards").Scan(&quantity)
@@ -31,7 +35,7 @@ func (r PGCardRepository) SeedCards(ctx context.Context) error {
 
 func (r PGCardRepository) GetCardIDs(ctx context.Context, codes []string) ([]int, error) {
 	query := "SELECT id FROM cards"
-	if len(codes) > 0 {
+	if len(codes) >= 1 {
 		query += fmt.Sprintf(" WHERE code IN ('%s');", strings.Join(codes, "','"))
 	}
 
@@ -42,13 +46,13 @@ func (r PGCardRepository) GetCardIDs(ctx context.Context, codes []string) ([]int
 	}
 
 	for rows.Next() {
-
-		var id int
-		err := rows.Scan(&id)
+		var ID int
+		err := rows.Scan(&ID)
 		if err != nil {
+			fmt.Println(err)
 			return IDs, err
 		}
-		IDs = append(IDs, id)
+		IDs = append(IDs, ID)
 	}
 
 	return IDs, nil

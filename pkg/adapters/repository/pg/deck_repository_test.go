@@ -111,3 +111,58 @@ func TestFetchCards_ExternalIDNotFound(t *testing.T) {
 	is.Equal(err, repository.ErrorDeckNotFound)
 	is.Equal(nil, openDeck)
 }
+
+func TestDrawCardFromDeck(t *testing.T) {
+	// given
+	is := is.New(t)
+	conn, tearDown := pg.NewDbTestSetup(t)
+	defer tearDown()
+
+	ctx := context.Background()
+	deckRepo := pg.PGDeckRepository{DB: conn}
+	cardsRepo := pg.PGCardRepository{DB: conn}
+
+	err := cardsRepo.SeedCards(ctx)
+	is.NoErr(err)
+
+	externalID := uuid.New()
+	params := repository.CreateDeckParams{
+		CardIDs:    []int{1, 2, 3, 4},
+		ExternalID: externalID,
+	}
+	_, err = deckRepo.CreateDeck(ctx, params)
+	is.NoErr(err)
+
+	openDeck, err := deckRepo.FetchDeck(ctx, externalID)
+	is.NoErr(err)
+	is.Equal(4, len(openDeck.Cards))
+
+	// when
+	err = deckRepo.DrawCardFromDeck(ctx, externalID, 3)
+	is.NoErr(err)
+
+	// then
+	openDeck, err = deckRepo.FetchDeck(ctx, externalID)
+	is.NoErr(err)
+	is.Equal(1, len(openDeck.Cards))
+}
+
+func TestDrawCardFromDeck_WhenDeckDoesNotExists(t *testing.T) {
+	// given
+	is := is.New(t)
+	conn, tearDown := pg.NewDbTestSetup(t)
+	defer tearDown()
+
+	ctx := context.Background()
+	deckRepo := pg.PGDeckRepository{DB: conn}
+	cardsRepo := pg.PGCardRepository{DB: conn}
+
+	err := cardsRepo.SeedCards(ctx)
+	is.NoErr(err)
+
+	externalID := uuid.New()
+
+	// when
+	err = deckRepo.DrawCardFromDeck(ctx, externalID, 3)
+	is.Equal(err, repository.ErrorDeckNotFound)
+}
