@@ -1,6 +1,7 @@
 package httprest
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -12,7 +13,7 @@ import (
 
 var deckNotFoundMessage = "deck not found"
 
-func (a App) Create(c *fiber.Ctx) error {
+func (a app) Create(c *fiber.Ctx) error {
 	cardCodes := getCardCodes(c.Query("cards", ""))
 	shuffled := c.QueryBool("shuffled", false)
 
@@ -34,7 +35,7 @@ func getCardCodes(codes string) []string {
 	return strings.Split(codes, ",")
 }
 
-func (a App) Open(c *fiber.Ctx) error {
+func (a app) Open(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
 		return err
@@ -54,10 +55,10 @@ type DrawCardsResponse struct {
 	Cards []decks.Card `json:"cards"`
 }
 
-func (a App) Draw(c *fiber.Ctx) error {
+func (a app) Draw(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
-		return err
+		return c.Status(http.StatusBadRequest).SendString("deck it is invalid")
 	}
 
 	count, err := c.ParamsInt("count", 0)
@@ -79,8 +80,7 @@ func getDeckID(c *fiber.Ctx) (uuid.UUID, error) {
 
 	deckID, err := uuid.Parse(paramID)
 	if err != nil {
-		return uuid.Nil, c.Status(http.StatusBadRequest).SendString("error id pattern unexpected")
+		return uuid.Nil, errors.New("error id pattern unexpected")
 	}
-
 	return deckID, nil
 }

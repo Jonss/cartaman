@@ -5,12 +5,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type App struct {
+type app struct {
 	FiberApp    *fiber.App
 	DeckService decks.DeckService
 }
 
-func (a App) Routes() {
+func NewApp(fiberApp *fiber.App, deckService decks.DeckService) app {
+	return app{FiberApp: fiberApp, DeckService: deckService}
+}
+
+func (a app) Routes() {
 	a.FiberApp.Post("/decks", func(c *fiber.Ctx) error {
 		return a.Create(c)
 	})
