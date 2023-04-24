@@ -49,7 +49,6 @@ func (r PGCardRepository) GetCardIDs(ctx context.Context, codes []string) ([]int
 		var ID int
 		err := rows.Scan(&ID)
 		if err != nil {
-			fmt.Println(err)
 			return IDs, err
 		}
 		IDs = append(IDs, ID)
@@ -59,7 +58,7 @@ func (r PGCardRepository) GetCardIDs(ctx context.Context, codes []string) ([]int
 }
 
 func buildCards() string {
-	cardSuits := []string{"CLUBS", "DIAMONDS", "HEARTS", "SPADES"}
+	cardSuits := []string{"SPADES", "CLUBS", "DIAMONDS", "HEARTS"}
 	cardValues := []string{"ACE", "2", "3", "4", "5", "6", "7", "8", "9", "10", "JACK", "QUEEN", "KING"}
 
 	var strBuilder strings.Builder

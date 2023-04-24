@@ -2,7 +2,6 @@ package pg_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository/pg"
@@ -82,7 +81,7 @@ func TestGetCardIDs(t *testing.T) {
 			// when
 			cardIDs, err := repo.GetCardIDs(context.Background(), tc.cardIDs)
 			is.NoErr(err)
-			fmt.Println(cardIDs)
+
 			// then
 			is.Equal(tc.expectedCards, len(cardIDs))
 		})

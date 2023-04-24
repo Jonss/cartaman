@@ -84,8 +84,8 @@ func TestFetchCards(t *testing.T) {
 	is.NoErr(err)
 	is.Equal(1, len(openDeck.Cards))
 	is.Equal("ACE", openDeck.Cards[0].Value)
-	is.Equal("AC", openDeck.Cards[0].Code)
-	is.Equal("CLUBS", openDeck.Cards[0].Suit)
+	is.Equal("AS", openDeck.Cards[0].Code)
+	is.Equal("SPADES", openDeck.Cards[0].Suit)
 	is.Equal(externalID, openDeck.Deck.ExternalID)
 }
 

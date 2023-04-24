@@ -2,6 +2,7 @@ package deck
 
 import (
 	"context"
+	"math/rand"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/google/uuid"
@@ -18,6 +19,9 @@ func (r *deckService) Create(ctx context.Context, params CreateParams) (*Deck, e
 		return nil, err
 	}
 
+	if params.Shuffled {
+		shuffleCards(cardIDs)
+	}
 	externalID := uuid.New()
 	deck, err := r.DeckRepository.CreateDeck(ctx, repository.CreateDeckParams{
 		ExternalID: externalID,
@@ -32,4 +36,10 @@ func (r *deckService) Create(ctx context.Context, params CreateParams) (*Deck, e
 		Shuffled:  deck.Shuffled,
 		Remaining: deck.Remaining,
 	}, nil
+}
+
+func shuffleCards(cardIDs []int) {
+	rand.Shuffle(len(cardIDs), func(i, j int) {
+		cardIDs[i], cardIDs[j] = cardIDs[j], cardIDs[i]
+	})
 }
