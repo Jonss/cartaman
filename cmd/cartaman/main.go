@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository/pg"
@@ -40,10 +41,12 @@ func main() {
 	r := httprest.NewApp(fiber.New(), &deckService)
 	r.Routes()
 
+	fmt.Printf("running on env: [%s]", cfg.Env)
 	log.Fatal(r.FiberApp.Listen(":" + cfg.Port))
 }
 
 type Config struct {
+	Env             string `mapstructure:"ENV"`
 	Port            string `mapstructure:"PORT"`
 	DBURL           string `mapstructure:"DATABASE_URL"`
 	DBName          string `mapstructure:"DATABASE_NAME"`

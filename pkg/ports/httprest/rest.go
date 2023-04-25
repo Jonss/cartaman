@@ -3,6 +3,7 @@ package httprest
 import (
 	"github.com/Jonss/cartaman/pkg/usecase/deck"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 type app struct {
@@ -11,6 +12,7 @@ type app struct {
 }
 
 func NewApp(fiberApp *fiber.App, deckService deck.DeckService) app {
+	fiberApp.Use(logger.New())
 	return app{FiberApp: fiberApp, DeckService: deckService}
 }
 
