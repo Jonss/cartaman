@@ -3,8 +3,8 @@
 ## How to run the project?
 
 There's two commands to run the project, one using your environment and another using only docker.
-You can run the commands `make env-up` to start the dependencies (database only ), then run `make run` to start the application locally.
-You can also use the command `make run-docker` which starts the database and the app into a docker container.
+You can run the commands `make env-up` to start the dependencies (database only ), then run `make run` to start the application locally. Runs on port 8082.
+You can also use the command `make run-docker` which starts the database and the app into a docker container. Runs on port 9000.
 
 There's a docs directory which contains the collection of requests and environments to be used on docker.
 
