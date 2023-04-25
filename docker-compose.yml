@@ -10,3 +10,15 @@ services:
     ports:
       - 5445:5432
 
+  app:
+    build:
+      context: .
+    container_name: cartaman-app
+    environment:
+      PORT: 9000
+      DATABASE_URL: postgres://user:pass@db:5432/cartaman?sslmode=disable
+      DATABASE_NAME: cartaman
+      DATABASE_MIGRATION_PATH: migrations
+    ports:
+      - 9000:9000
+

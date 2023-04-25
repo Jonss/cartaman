@@ -13,4 +13,8 @@ new-migration: # new-migration name=migration_name
 	migrate create -ext sql -dir pkg/adapters/repository/pg/migrations -seq $(name)
 
 env-up:
-	docker-compose up --build
+	docker-compose up --build -d db
+
+run-docker: env-up
+	docker-compose up --build app
+

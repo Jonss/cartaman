@@ -43,21 +43,18 @@ func main() {
 	log.Fatal(r.FiberApp.Listen(":" + cfg.Port))
 }
 
-type config struct {
+type Config struct {
 	Port            string `mapstructure:"PORT"`
 	DBURL           string `mapstructure:"DATABASE_URL"`
 	DBName          string `mapstructure:"DATABASE_NAME"`
 	DBMigrationPath string `mapstructure:"DATABASE_MIGRATION_PATH"`
 }
 
-func loadConfig() (config, error) {
-	viper.AddConfigPath(".")
-	viper.SetConfigName("local")
-	viper.SetConfigType("env")
-
+func loadConfig() (Config, error) {
+	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
 
-	var config config
+	var config Config
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return config, nil
