@@ -129,7 +129,7 @@ func TestOpenDeck(t *testing.T) {
 			name:           "should get status code 400 when deckID is invalid",
 			deckID:         "invalid-deck-id",
 			buildStubs:     func(deckRepo *mock_deck.MockDeckService) {},
-			want:           `deck id is invalid`,
+			want:           `{"message":"deck id is invalid"}`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
@@ -140,7 +140,7 @@ func TestOpenDeck(t *testing.T) {
 					Times(1).
 					Return(&deck.OpenDeck{}, repository.ErrorDeckNotFound)
 			},
-			want:           `deck not found`,
+			want:           `{"message":"deck not found"}`,
 			wantStatusCode: http.StatusNotFound,
 		},
 	}
@@ -203,7 +203,7 @@ func TestDrawDeck(t *testing.T) {
 			deckID:         "invalid-deck-id",
 			count:          "0",
 			buildStubs:     func(deckRepo *mock_deck.MockDeckService) {},
-			want:           `deck id is invalid`,
+			want:           `{"message":"deck id is invalid"}`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
@@ -212,7 +212,7 @@ func TestDrawDeck(t *testing.T) {
 			count:  "0",
 			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
-			want:           `count should be above 0`,
+			want:           `{"message":"count should be above 0"}`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
@@ -221,7 +221,7 @@ func TestDrawDeck(t *testing.T) {
 			count:  "-90",
 			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
-			want:           `count should be above 0`,
+			want:           `{"message":"count should be above 0"}`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
@@ -230,7 +230,7 @@ func TestDrawDeck(t *testing.T) {
 			count:  "invalid-number",
 			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
 			},
-			want:           `count should be above 0`,
+			want:           `{"message":"count should be above 0"}`,
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
@@ -242,7 +242,7 @@ func TestDrawDeck(t *testing.T) {
 					Times(1).
 					Return([]deck.Card{}, repository.ErrorDeckNotFound)
 			},
-			want:           `deck not found`,
+			want:           `{"message":"deck not found"}`,
 			wantStatusCode: http.StatusNotFound,
 		},
 	}

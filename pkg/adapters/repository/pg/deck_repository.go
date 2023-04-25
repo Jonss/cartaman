@@ -93,6 +93,7 @@ func (r PGDeckRepository) FetchDeck(ctx context.Context, deckID uuid.UUID) (*rep
 		return nil, repository.ErrorDeckNotFound
 	}
 
+	openDeck.Deck.Remaining = len(cards)
 	openDeck.Cards = cards
 	return &openDeck, nil
 }

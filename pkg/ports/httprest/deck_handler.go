@@ -13,6 +13,7 @@ import (
 
 var deckNotFoundMessage = "deck not found"
 var deckIdIsInvalidMessage = "deck id is invalid"
+var unexpectedErrorMessage = "unexpected error"
 
 func (a app) Create(c *fiber.Ctx) error {
 	cardCodes := getCardCodes(c.Query("cards", ""))
@@ -23,8 +24,7 @@ func (a app) Create(c *fiber.Ctx) error {
 		Shuffled:  shuffled,
 	})
 	if err != nil {
-		c.Status(http.StatusInternalServerError).SendString("error")
-		return err
+		return c.Status(http.StatusInternalServerError).JSON(newErrorMessage(unexpectedErrorMessage))
 	}
 	return c.Status(http.StatusCreated).JSON(deck)
 }
@@ -39,15 +39,15 @@ func getCardCodes(codes string) []string {
 func (a app) Open(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString(deckIdIsInvalidMessage)
+		return c.Status(http.StatusBadRequest).JSON(newErrorMessage(deckIdIsInvalidMessage))
 	}
 
 	openDeck, err := a.DeckService.Open(c.UserContext(), deckID)
 	if err != nil {
 		if err == repository.ErrorDeckNotFound {
-			return c.Status(http.StatusNotFound).SendString(deckNotFoundMessage)
+			return c.Status(http.StatusNotFound).JSON(newErrorMessage(deckNotFoundMessage))
 		}
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+		return c.Status(http.StatusInternalServerError).JSON(newErrorMessage(unexpectedErrorMessage))
 	}
 	return c.JSON(openDeck)
 }
@@ -59,19 +59,19 @@ type DrawCardsResponse struct {
 func (a app) Draw(c *fiber.Ctx) error {
 	deckID, err := getDeckID(c)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString(deckIdIsInvalidMessage)
+		return c.Status(http.StatusBadRequest).JSON(newErrorMessage(deckIdIsInvalidMessage))
 	}
 
 	count, err := c.ParamsInt("count", 0)
 	if err != nil || (count <= 0) {
-		return c.Status(http.StatusBadRequest).SendString("count should be above 0")
+		return c.Status(http.StatusBadRequest).JSON(newErrorMessage("count should be above 0"))
 	}
 	drawDeck, err := a.DeckService.Draw(c.UserContext(), deckID, count)
 	if err != nil {
 		if err == repository.ErrorDeckNotFound {
-			return c.Status(http.StatusNotFound).SendString(deckNotFoundMessage)
+			return c.Status(http.StatusNotFound).JSON(newErrorMessage(deckNotFoundMessage))
 		}
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+		return c.Status(http.StatusBadRequest).JSON(newErrorMessage(unexpectedErrorMessage))
 	}
 	return c.JSON(DrawCardsResponse{drawDeck})
 }

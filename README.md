@@ -16,6 +16,8 @@ I decided to use clean architecture, the `usecase` package doesn't have access t
 The `adapters` package contains the "output", I used a postgresql but could be a file or another type of database.
 
 I didn't tested the usecase layer, because the `adapters/repository` was extensively tested using test-containers. Same for `ports/httprest`.
+This project is based on this [article](https://threedots.tech/post/introducing-clean-architecture).
+
 
 
 

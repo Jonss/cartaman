@@ -27,3 +27,11 @@ func (a app) Routes() {
 		return a.Draw(c)
 	})
 }
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
+
+func newErrorMessage(message string) ErrorResponse {
+	return ErrorResponse{Message: message}
+}
