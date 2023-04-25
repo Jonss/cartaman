@@ -2,11 +2,14 @@ package deck
 
 import (
 	"context"
+	"errors"
 	"math/rand"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/google/uuid"
 )
+
+var ErrorInvalidCardCodes = errors.New("error there's invalid card codes in the params")
 
 type CreateParams struct {
 	CardCodes []string
@@ -17,6 +20,10 @@ func (r *deckService) Create(ctx context.Context, params CreateParams) (*Deck, e
 	cardIDs, err := r.CardRepository.GetCardIDs(ctx, params.CardCodes)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(params.CardCodes) > 0 && len(params.CardCodes) != len(cardIDs) {
+		return nil, ErrorInvalidCardCodes
 	}
 
 	if params.Shuffled {

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/google/uuid"
 )
@@ -44,4 +44,5 @@ type CardRepository interface {
 	GetCardIDs(context.Context, []string) ([]int, error)
 }
 
-var ErrorDeckNotFound = fmt.Errorf("error deck not found")
+var ErrorDeckNotFound = errors.New("error deck not found")
+var ErrorCardIDsInvalid = errors.New("error expect cardIDs length > 0")

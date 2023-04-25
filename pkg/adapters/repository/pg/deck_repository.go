@@ -3,7 +3,6 @@ package pg
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	_ "github.com/golang-migrate/migrate/v4/source/file" // migration
@@ -23,7 +22,7 @@ var _ repository.DeckRepository = (*PGDeckRepository)(nil)
 
 func (r PGDeckRepository) CreateDeck(ctx context.Context, params repository.CreateDeckParams) (*repository.Deck, error) {
 	if len(params.CardIDs) == 0 {
-		return nil, errors.New("error expect cardIDs length > 0")
+		return nil, repository.ErrorCardIDsInvalid
 	}
 
 	tx, err := r.DB.BeginTx(ctx, nil)

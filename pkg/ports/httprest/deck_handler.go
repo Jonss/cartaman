@@ -7,6 +7,7 @@ import (
 
 	"github.com/Jonss/cartaman/pkg/adapters/repository"
 	"github.com/Jonss/cartaman/pkg/usecase/deck"
+	deck_usecase "github.com/Jonss/cartaman/pkg/usecase/deck"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -14,16 +15,21 @@ import (
 var deckNotFoundMessage = "deck not found"
 var deckIdIsInvalidMessage = "deck id is invalid"
 var unexpectedErrorMessage = "unexpected error"
+var checkCardCodesMessage = "check the card codes sent in the request"
 
 func (a app) Create(c *fiber.Ctx) error {
 	cardCodes := getCardCodes(c.Query("cards", ""))
 	shuffled := c.QueryBool("shuffled", false)
 
-	deck, err := a.DeckService.Create(c.UserContext(), deck.CreateParams{
+	deck, err := a.DeckService.Create(c.UserContext(), deck_usecase.CreateParams{
 		CardCodes: cardCodes,
 		Shuffled:  shuffled,
 	})
 	if err != nil {
+		if err == repository.ErrorCardIDsInvalid || err == deck_usecase.ErrorInvalidCardCodes {
+			return c.Status(http.StatusBadRequest).JSON(newErrorMessage(checkCardCodesMessage))
+		}
+
 		return c.Status(http.StatusInternalServerError).JSON(newErrorMessage(unexpectedErrorMessage))
 	}
 	return c.Status(http.StatusCreated).JSON(deck)

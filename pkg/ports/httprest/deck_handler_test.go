@@ -66,6 +66,26 @@ func TestCreateDeck(t *testing.T) {
 			want:           `{"deck_id":"c723d533-8612-4cde-bd5e-438c03f6204a","shuffled":false,"remaining":3}`,
 			wantStatusCode: http.StatusCreated,
 		},
+		{
+			name:     "should get an error when card codes are invalid",
+			endpoint: "?cards=KK,DD,CC",
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
+				params := deck.CreateParams{CardCodes: []string{"KK", "DD", "CC"}, Shuffled: false}
+				deckRepo.EXPECT().Create(context.Background(), params).Times(1).Return(&deck.Deck{}, repository.ErrorCardIDsInvalid)
+			},
+			want:           `{"message":"check the card codes sent in the request"}`,
+			wantStatusCode: http.StatusBadRequest,
+		},
+		{
+			name:     "should get an error when card codes have one or more invalid",
+			endpoint: "?cards=AS,KD,XD,YS",
+			buildStubs: func(deckRepo *mock_deck.MockDeckService) {
+				params := deck.CreateParams{CardCodes: []string{"AS", "KD", "XD", "YS"}, Shuffled: false}
+				deckRepo.EXPECT().Create(context.Background(), params).Times(1).Return(&deck.Deck{}, deck.ErrorInvalidCardCodes)
+			},
+			want:           `{"message":"check the card codes sent in the request"}`,
+			wantStatusCode: http.StatusBadRequest,
+		},
 	}
 
 	for _, tc := range testCases {
